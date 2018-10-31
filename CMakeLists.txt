@@ -7,4 +7,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -pedantic -O2 -
  -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC \
   -D_FORTIFY_SOURCE=2")
 
-add_executable(graphsalg main.cpp graph.h)
+add_executable(graphsalg main.cpp graph.h vertex.h)

@@ -1,44 +1,14 @@
 #ifndef GRAPHSALG_GRAPH_H
 #define GRAPHSALG_GRAPH_H
 
+#include "vertex.h"
+
 #include <set>
 #include <map>
 #include <vector>
 #include <ostream>
 #include <fstream>
 #include <sstream>
-
-struct Vertex
-{
-    Vertex(int i, double d) : id(i), distance(d) {};
-    int id;
-    double distance;
-
-    friend bool operator< (const Vertex& lhs, const Vertex& rhs);
-    friend bool operator> (const Vertex& lhs, const Vertex& rhs);
-    friend bool operator==(const Vertex& lhs, const Vertex& rhs);
-    friend bool operator!=(const Vertex& lhs, const Vertex& rhs);
-};
-
-
-std::ostream& operator<<(std::ostream& os, const std::set<Vertex>& vc)
-{
-    for (const auto &item : vc) {
-        os << item.id << ", ";
-//        os << "(" << item.id << ", dist: " << item.distance << ") ";
-    }
-    return os;
-}
-
-
-std::ostream& operator<<(std::ostream& os, const std::vector<Vertex>& vc)
-{
-    for (const auto &item : vc) {
-        os << "(" << item.id << ", dist: " << item.distance << ") ";
-    }
-    return os;
-}
-
 
 class Graph
 {
@@ -130,30 +100,6 @@ bool Graph::traverese(int id)
 int Graph::getptr() const
 {
     return ptr_;
-}
-
-
-bool operator<(const Vertex &lhs, const Vertex &rhs)
-{
-    return lhs.id < rhs.id;
-}
-
-
-bool operator>(const Vertex &lhs, const Vertex &rhs)
-{
-    return lhs.id > rhs.id;
-}
-
-
-bool operator==(const Vertex &lhs, const Vertex &rhs)
-{
-    return lhs.id == rhs.id;
-}
-
-
-bool operator!=(const Vertex &lhs, const Vertex &rhs)
-{
-    return lhs.id != rhs.id;
 }
 
 
