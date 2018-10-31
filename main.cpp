@@ -19,6 +19,8 @@ int main()
 
     std::cout << glp << "\n\n";
 
+    glp.writeasJSON("grph.json");
+
     std::cout << std::boolalpha;
 
     std::cout << glp.getptr() << " --> 2 : " << glp.traverese(2) << "\n";
