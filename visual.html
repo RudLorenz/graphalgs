@@ -48,7 +48,7 @@ var link = svg.selectAll(".link");
     node = svg.selectAll(".node");
     lbls = svg.selectAll(".lbls");
 
-d3.json("graphy.json", function(error, graph) {
+d3.json("graph.json", function(error, graph) {
   if (error) throw error;
 
   force
