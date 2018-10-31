@@ -118,7 +118,7 @@ int Graph::writeasJSON(const std::string &filename) const
     result << "{\n";
     result << "\t\"nodes\": [\n";
     for (const auto &item : vert_) {
-        result << "\t\t{\"id\": \"" << item.first << "\", \"group\": 1},\n";
+        result << "\t\t{\"id\": " << item.first-1 << ", \"txt\": \"" << item.first-1 << "\"},\n";
     }
 
     result.seekp(-2, result.cur);
@@ -130,9 +130,10 @@ int Graph::writeasJSON(const std::string &filename) const
     {
         for (const auto &set_elem : item.second)
         {
-            result << "\t\t{\"source\": \"" << item.first
-                   << "\", \"target\": \""    << set_elem.id
-                   << "\", \"value\": "       << set_elem.distance << "},\n";
+            result << "\t\t{\"source\": " << item.first-1
+                   << ", \"target\": "    << set_elem.id-1 << ""
+                   //<< "\", \"value\": "       << set_elem.distance
+                   << "},\n";
         }
     }
 
