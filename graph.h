@@ -27,6 +27,8 @@ public:
 
     int getptr() const;
 
+    int writeasJSON(const std::string& filename) const;
+
     friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
 
 private:
@@ -100,6 +102,47 @@ bool Graph::traverese(int id)
 int Graph::getptr() const
 {
     return ptr_;
+}
+
+int Graph::writeasJSON(const std::string &filename) const
+{
+    std::ofstream result_file;
+    result_file.open(filename);
+
+    std::stringstream result;
+
+    if (!result_file.is_open()) {
+        return -1;
+    }
+
+    result << "{\n";
+    result << "\t\"nodes\": [\n";
+    for (const auto &item : vert_) {
+        result << "\t\t{\"id\": \"" << item.first << "\", \"group\": 1},\n";
+    }
+
+    result.seekp(-2, result.cur);
+    result << "\n\t],\n";
+
+    result << "\t\"links\": [\n";
+
+    for (const auto &item : vert_)
+    {
+        for (const auto &set_elem : item.second)
+        {
+            result << "\t\t{\"source\": \"" << item.first
+                   << "\", \"target\": \""    << set_elem.id
+                   << "\", \"value\": "       << set_elem.distance << "},\n";
+        }
+    }
+
+    result.seekp(-2, result.cur);
+    result << "\n\t]\n}";
+
+    result_file << result.rdbuf();
+    result_file.close();
+
+    return 0;
 }
 
 
