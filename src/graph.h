@@ -29,6 +29,7 @@ public:
     int getptr() const;
 
     int writeasJSON(const std::string& filename) const;
+    int writeasMatrix(const std::string& filename);
 
     std::set<Vertex>& operator[](int id);
     const std::set<Vertex>& operator[](int id) const;
@@ -145,6 +146,49 @@ int Graph::writeasJSON(const std::string &filename) const
 
     result_file << result.rdbuf();
     result_file.close();
+
+    return 0;
+}
+
+
+int Graph::writeasMatrix(const std::string &filename)
+{
+    std::ofstream result_file;
+    result_file.open(filename);
+
+    if (!result_file.is_open()) {
+        return -1;
+    }
+
+    double ** result = new double*[vert_.size()];
+    result[0] = new double[vert_.size() * vert_.size()];
+
+    for (size_t i = 1; i != vert_.size(); ++i) {
+        result[i] = result[i-1] + vert_.size();
+    }
+
+    for (const auto &vert : vert_)
+    {
+        for (size_t i = 0; i < vert_.size(); ++i) {
+            result[vert.first-1][i] = 0;
+        }
+
+        for (const auto &set_elem : vert.second) {
+            result[vert.first-1][set_elem.id] = set_elem.distance;
+        }
+    }
+
+    for (size_t i = 0; i < vert_.size(); i++)
+    {
+        for(size_t j = 0; j < vert_.size(); j++) {
+            result_file << result[i][j] << "\t";  // TABS VS SPACES
+        }                                         // HERE WE GO AGAIN
+        result_file << "\n";
+    }
+
+    result_file.close();
+    delete[] result[0];
+    delete[] result;
 
     return 0;
 }
