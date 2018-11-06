@@ -171,8 +171,14 @@ int Graph::writeasMatrix(const std::string &filename)
             result[vert.first-1][i] = 0;
         }
 
-        for (const auto &set_elem : vert.second) {
-            result[vert.first-1][set_elem.id-1] = set_elem.distance;
+        if (vert.second.empty()) {
+            result[vert.first-1][vert.first-1] = 1;
+        }
+        else
+        {
+            for (const auto &set_elem : vert.second) {
+                result[vert.first - 1][set_elem.id - 1] = set_elem.distance;
+            }
         }
     }
 
