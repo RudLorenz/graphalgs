@@ -172,10 +172,11 @@ int Graph::writeasMatrix(const std::string &filename)
         }
 
         for (const auto &set_elem : vert.second) {
-            result[vert.first-1][set_elem.id] = set_elem.distance;
+            result[vert.first-1][set_elem.id-1] = set_elem.distance;
         }
     }
 
+    result_file << vert_.size() << "\n";
     for (size_t i = 0; i < vert_.size(); i++)
     {
         for(size_t j = 0; j < vert_.size(); j++) {
