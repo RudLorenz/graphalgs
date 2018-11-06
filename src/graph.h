@@ -110,8 +110,7 @@ int Graph::getptr() const
 
 int Graph::writeasJSON(const std::string &filename) const
 {
-    std::ofstream result_file;
-    result_file.open(filename);
+    std::ofstream result_file(filename);
 
     std::stringstream result;
 
@@ -153,8 +152,7 @@ int Graph::writeasJSON(const std::string &filename) const
 
 int Graph::writeasMatrix(const std::string &filename)
 {
-    std::ofstream result_file;
-    result_file.open(filename);
+    std::ofstream result_file(filename);
 
     if (!result_file.is_open()) {
         return -1;
