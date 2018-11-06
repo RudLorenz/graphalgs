@@ -31,6 +31,8 @@ public:
     int writeasJSON(const std::string& filename) const;
     int writeasMatrix(const std::string& filename);
 
+    int readfromMatrix(const std::string& filename);
+
     std::set<Vertex>& operator[](int id);
     const std::set<Vertex>& operator[](int id) const;
 
@@ -208,6 +210,43 @@ std::set<Vertex> &Graph::operator[](int id)
 const std::set<Vertex> &Graph::operator[](int id) const
 {
     return vert_.at(id);
+}
+
+
+int Graph::readfromMatrix(const std::string &filename)
+{
+    std::ifstream input(filename);
+
+    if (!input.is_open()) {
+        return -1;
+    }
+
+    int graph_size = 0;
+
+    input >> graph_size;
+
+    int counter = 0;
+    id_gen_ = 1;   // Should I just append the graph content?
+    double tmp = 0;
+
+
+    while (input >> tmp)
+    {
+        counter++;
+        if (tmp != 0) {
+            vert_[id_gen_].insert(Vertex(counter, tmp));
+        }
+
+        if (counter == graph_size)
+        {
+            id_gen_++;
+            counter = 0;
+        }
+    }
+
+    input.close();
+
+    return 0;
 }
 
 
