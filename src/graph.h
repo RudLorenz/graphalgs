@@ -9,6 +9,7 @@
 #include <ostream>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 class Graph
 {
@@ -28,6 +29,9 @@ public:
     int getptr() const;
 
     int writeasJSON(const std::string& filename) const;
+
+    std::set<Vertex>& operator[](int id);
+    const std::set<Vertex>& operator[](int id) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
 
@@ -92,8 +96,7 @@ bool Graph::traverese(int id)
         ptr_ = id;
         return true;
     }
-    else
-    {
+    else {
         return false;
     }
 }
@@ -144,6 +147,18 @@ int Graph::writeasJSON(const std::string &filename) const
     result_file.close();
 
     return 0;
+}
+
+
+std::set<Vertex> &Graph::operator[](int id)
+{
+    return vert_.at(id);
+}
+
+
+const std::set<Vertex> &Graph::operator[](int id) const
+{
+    return vert_.at(id);
 }
 
 
