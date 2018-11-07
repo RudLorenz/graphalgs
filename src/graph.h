@@ -39,8 +39,9 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
 
 private:
-    int id_gen_ {1};
-    int ptr_ {1};
+
+    int id_gen_ {0};
+    int ptr_ {0};
     std::map<int, std::set<Vertex>> vert_;
 };
 
@@ -123,7 +124,7 @@ int Graph::writeasJSON(const std::string &filename) const
     result << "{\n";
     result << "\t\"nodes\": [\n";
     for (const auto &item : vert_) {
-        result << "\t\t{\"id\": " << item.first-1 << ", \"txt\": \"" << item.first-1 << "\"},\n";
+        result << "\t\t{\"id\": " << item.first << ", \"txt\": \"" << item.first << "\"},\n";
     }
 
     result.seekp(-2, result.cur);
@@ -135,8 +136,8 @@ int Graph::writeasJSON(const std::string &filename) const
     {
         for (const auto &set_elem : item.second)
         {
-            result << "\t\t{\"source\": " << item.first-1
-                   << ", \"target\": "    << set_elem.id-1 << ""
+            result << "\t\t{\"source\": " << item.first
+                   << ", \"target\": "    << set_elem.id << ""
                    //<< "\", \"value\": "       << set_elem.distance
                    << "},\n";
         }
@@ -170,16 +171,16 @@ int Graph::writeasMatrix(const std::string &filename)
     for (const auto &vert : vert_)
     {
         for (size_t i = 0; i < vert_.size(); ++i) {
-            result[vert.first-1][i] = 0;
+            result[vert.first][i] = 0;
         }
 
         if (vert.second.empty()) {
-            result[vert.first-1][vert.first-1] = 1;
+            result[vert.first][vert.first] = 1;
         }
         else
         {
             for (const auto &set_elem : vert.second) {
-                result[vert.first - 1][set_elem.id - 1] = set_elem.distance;
+                result[vert.first][set_elem.id] = set_elem.distance;
             }
         }
     }
@@ -226,16 +227,17 @@ int Graph::readfromMatrix(const std::string &filename)
     input >> graph_size;
 
     int counter = 0;
-    id_gen_ = 1;   // Should I just append the graph content?
+    id_gen_ = 0;   // Should I just append the graph content?
     double tmp = 0;
 
 
     while (input >> tmp)
     {
-        counter++;
         if (tmp != 0) {
             vert_[id_gen_].insert(Vertex(counter, tmp));
         }
+
+        counter++;
 
         if (counter == graph_size)
         {

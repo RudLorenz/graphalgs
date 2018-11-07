@@ -20,7 +20,7 @@ struct Vertex
 std::ostream& operator<<(std::ostream& os, const std::set<Vertex>& vc)
 {
     for (const auto &item : vc) {
-        os << item.id-1 << ", ";
+        os << item.id << ", ";
 //        os << "(" << item.id << ", dist: " << item.distance << ") ";
     }
     return os;
