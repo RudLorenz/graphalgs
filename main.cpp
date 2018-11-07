@@ -17,9 +17,18 @@ int main()
     glp.addVertex(4);
     glp.addEdge(2, 5);
 
-////    glp.writeasJSON("graph.json");
+    glp.writeasJSON("graph.json");
+
+    std::vector<int> bla;
 
     auto result = glp.findHamiltonCycles();
+
+    if(result.empty())
+    {
+        std::cout << "No Hamilton cycles found\n";
+        return 0;
+    }
+
 
     for (const auto &item : result)
     {
@@ -28,7 +37,6 @@ int main()
         }
         std::cout << "\n";
     }
-    std::cout << std::endl;
 
     return 0;
 }

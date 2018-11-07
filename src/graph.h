@@ -20,9 +20,9 @@ public:
     void addEdge(int id_1, int id_2, double distance);
     void addEdge(int id_1, int id_2);
 
-    void addVertex();
-    void addVertex(int id, double distance);
-    void addVertex(int id);
+    int addVertex();
+    int addVertex(int id, double distance);
+    int addVertex(int id);
 
     bool traverese(int id);
 
@@ -64,24 +64,27 @@ void Graph::addEdge(int id_1, int id_2)
 }
 
 
-void Graph::addVertex()
+int Graph::addVertex()
 {
-    vert_[id_gen_++];
+    vert_[id_gen_];
+    return id_gen_++;
 }
 
 
-void Graph::addVertex(int id, double distance)
+int Graph::addVertex(int id, double distance)
 {
     int new_id = id_gen_++;
 
     vert_[id].emplace(new_id, distance);
     vert_[new_id].emplace(id, distance);
+
+    return new_id;
 }
 
 
-void Graph::addVertex(int id)
+int Graph::addVertex(int id)
 {
-    addVertex(id, 1);
+    return addVertex(id, 1);
 }
 
 
