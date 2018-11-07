@@ -4,14 +4,12 @@
 
 .link {
   stroke: #000;
-  stroke-width: 1.5px;
+  stroke-width: 3px;
 }
 
 .node {
   cursor: move;
   fill: steelblue;
-  stroke: #000;
-  stroke-width: 1.5px;
 }
 
 .node.fixed {
@@ -37,8 +35,8 @@ var color = d3.scale.category10();
 var force = d3.layout.force()
     .size([width, height])
     .charge(-400)
-    .chargeDistance(100)
-    .linkDistance(60)
+    .chargeDistance(200)
+    .linkDistance(100)
     .on("tick", tick);
 
 var drag = force.drag()
