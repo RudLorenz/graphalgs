@@ -28,6 +28,8 @@ public:
 
     int getptr() const;
 
+    auto findHamiltonCycles();
+
     int writeasJSON(const std::string& filename) const;
     int writeasMatrix(const std::string& filename);
 
@@ -39,6 +41,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
 
 private:
+    void recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vector<int> &path,
+                                 std::vector<std::vector<int>> &result);
 
     int id_gen_ {0};
     int ptr_ {0};
@@ -249,6 +253,53 @@ int Graph::readfromMatrix(const std::string &filename)
     input.close();
 
     return 0;
+}
+
+
+void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vector<int> &path,
+                                    std::vector<std::vector<int>> &result)
+{
+    if(vert_.size() == path.size())
+    {
+        bool last_connected_to_first =
+                (vert_.at( path.back() ).find( Vertex(path.front(), 1) ) != vert_.at( path.back() ).end());
+
+        if(last_connected_to_first) {
+            result.emplace_back(path);
+        }
+        return;
+    }
+
+    for (auto &set_item : vert_.at(vt))
+    {
+        if (!visited[set_item.id])
+        {
+            visited[set_item.id] = true;
+            path.emplace_back(set_item.id);
+
+            recursiveHamiltonSearch(set_item.id, visited, path, result);
+
+            // backtrack time!
+            visited[set_item.id] = false;
+            path.pop_back();
+        }
+    }
+}
+
+auto Graph::findHamiltonCycles()
+{
+    std::vector<int> path;
+    path.reserve(vert_.size());
+    path.emplace_back(ptr_);
+
+    std::vector<bool> visited(vert_.size(), false);
+    visited[ptr_] = true;
+
+    std::vector<std::vector<int>> result;
+
+    recursiveHamiltonSearch(ptr_, visited, path, result);
+
+    return result;
 }
 
 

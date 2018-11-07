@@ -7,21 +7,28 @@ int main()
     Graph glp;
 
     glp.addVertex();
-    glp.addVertex(1);
-    glp.addVertex(1);
-    glp.addVertex(2);
+    glp.addVertex(0);
+    glp.addVertex();
+    glp.addVertex();
+    glp.addEdge(1, 2);
+    glp.addEdge(1, 3);
+    glp.addEdge(0, 3);
     glp.addVertex(3);
-    glp.addVertex(5);
-    glp.addVertex(5);
-    glp.addEdge(6, 7);
-    glp.addVertex(3);
-    glp.addVertex(3);
-    glp.addVertex(7);
-    glp.addVertex(8);
-    glp.addVertex(9);
+    glp.addVertex(4);
+    glp.addEdge(2, 5);
 
-    glp.writeasJSON("graph.json");
-    glp.writeasMatrix("bla.txt");
+////    glp.writeasJSON("graph.json");
+
+    auto result = glp.findHamiltonCycles();
+
+    for (const auto &item : result)
+    {
+        for (const auto &item1 : item) {
+            std::cout << item1 << " -> ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
