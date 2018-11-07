@@ -2,40 +2,112 @@
 
 #include <iostream>
 
-int main()
+int main(int argc, char**argv)
 {
     Graph glp;
 
-    glp.addVertex();
-    glp.addVertex(0);
-    glp.addVertex();
-    glp.addVertex();
-    glp.addEdge(1, 2);
-    glp.addEdge(1, 3);
-    glp.addEdge(0, 3);
-    glp.addVertex(3);
-    glp.addVertex(4);
-    glp.addEdge(2, 5);
+    if (argc == 2) // assume it's a filename
+    {
+        if (-1 == glp.readfromMatrix(argv[1]))
+        {
+            std::cout << "Error reading from file\n";
+            return -1;
+        }
+        std::cout << glp << "\n";
+    }
+    else // interactive input
+    {
+        std::cout << "Enter number of vertices:\n";
+        int vert_count = 0;
+        std::cin >> vert_count;
 
-    glp.writeasJSON("graph.json");
+        if(!std::cin || vert_count <= 0)
+        {
+            std::cout << "Bad input!\n";
+            return -1;
+        }
 
-    std::vector<int> bla;
+        for (int i = 0; i < vert_count; i++) {
+            glp.addVertex();
+        }
+
+        for (int i = 0; i < vert_count; i++)
+        {
+            int adjacent_count = 0;
+            std::cout << "Number of adjacent vertices for " << i << ": ";
+            std::cin >> adjacent_count;
+
+            if(!std::cin || adjacent_count < 0)
+            {
+                std::cout << "Bad input!\n";
+                return -1;
+            }
+
+            for (int j = 0; j < adjacent_count; j++)
+            {
+                int destination = 0;
+                std::cout << i << " --> ";
+                std::cin >> destination;
+                if(!std::cin || (destination < 0 && destination > vert_count))
+                {
+                    std::cout << "Bad input!\n";
+                    return -1;
+                }
+
+                glp.addEdge(i, destination);
+            }
+        }
+    }
 
     auto result = glp.findHamiltonCycles();
 
-    if(result.empty())
-    {
+    if (result.empty()) {
         std::cout << "No Hamilton cycles found\n";
-        return 0;
+    }
+    else
+    {
+        for (const auto &path : result)
+        {
+            for (const auto &item : path) {
+                std::cout << item << " --> ";
+            }
+            std::cout << "\n";
+        }
     }
 
+    int decision = 0;
+    std::cout << "Write graph as JSON [1] or as Matrix[2] or don't[3]?\n";
 
-    for (const auto &item : result)
+    std::cin >> decision;
+    while(1)
     {
-        for (const auto &item1 : item) {
-            std::cout << item1 << " -> ";
+        if (1 == decision)
+        {
+            glp.writeasJSON("graph.json");
+            break;
         }
-        std::cout << "\n";
+        if (2 == decision)
+        {
+            std::cout << "filename: ";
+            std::string filename;
+            std::cin >> filename;
+            if(-1 == glp.writeasMatrix(filename)) {
+                std::cout << "cant write to file!Try different name\n";
+            }
+            else {
+                break;
+            }
+        }
+        if (3 == decision) {
+            break;
+        }
+        else
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore everything until newline
+            std::cout << "Write graph as JSON [1] or as Matrix[2] or don't[3]?\n";
+            std::cin >> decision;
+        }
     }
 
     return 0;
