@@ -54,7 +54,7 @@ int main(int argc, char**argv)
                     return -1;
                 }
 
-                glp.addEdge(i, destination);
+                glp.addDirectedEdge(i, destination);
             }
         }
     }

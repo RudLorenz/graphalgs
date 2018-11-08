@@ -10,14 +10,19 @@
 #include <fstream>
 #include <sstream>
 
+#include <iostream>
+
 class Graph
 {
 public:
     Graph() = default;
     Graph(const Graph& gp) = default;
 
-    void addEdge(int id_1, int id_2, double distance);
+    void addDirectedEdge(int id_1, int id_2);
+    void addDirectedEdge(int id_1, int id_2, double distance);
+
     void addEdge(int id_1, int id_2);
+    void addEdge(int id_1, int id_2, double distance);
 
     int addVertex();
     int addVertex(int id, double distance);
@@ -49,10 +54,15 @@ private:
 };
 
 
-void Graph::addEdge(int id_1, int id_2, double distance)
+void Graph::addDirectedEdge(int id_1, int id_2)
+{
+    vert_[id_1].emplace(id_2, 1);
+}
+
+
+void Graph::addDirectedEdge(int id_1, int id_2, double distance)
 {
     vert_[id_1].emplace(Vertex(id_2, distance));
-    vert_[id_2].emplace(Vertex(id_1, distance));
 }
 
 
@@ -60,6 +70,13 @@ void Graph::addEdge(int id_1, int id_2)
 {
     vert_[id_1].emplace(id_2, 1);
     vert_[id_2].emplace(id_1, 1);
+}
+
+
+void Graph::addEdge(int id_1, int id_2, double distance)
+{
+    vert_[id_1].emplace(id_2, distance);
+    vert_[id_2].emplace(id_1, distance);
 }
 
 
@@ -116,6 +133,7 @@ int Graph::getptr() const
 {
     return ptr_;
 }
+
 
 int Graph::writeasJSON(const std::string &filename) const
 {
@@ -288,16 +306,25 @@ void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vec
     }
 }
 
+
 auto Graph::findHamiltonCycles()
 {
+    std::vector<std::vector<int>> result;
+    // check if graph is connected
+
+    for (const auto &vert : vert_)
+    {
+        if (vert.second.empty()) {
+            return result;
+        }
+    }
+
     std::vector<int> path;
     path.reserve(vert_.size());
     path.emplace_back(ptr_);
 
     std::vector<bool> visited(vert_.size(), false);
     visited[ptr_] = true;
-
-    std::vector<std::vector<int>> result;
 
     recursiveHamiltonSearch(ptr_, visited, path, result);
 
