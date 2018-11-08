@@ -10,19 +10,22 @@
 ## Usage
 
   Clone the repository:
-  
+
   ```bash
   git clone https://github.com/RudLorenz/graphalgs.git && cd graphalgs
   ```
-  
+
   Let CMake create required makefiles and compile the project with make
 
   ```bash
-  mkdir build && cd build
+  mkdir build
+  cd build
   cmake ../
   make
   ```
-  
+
+  For Windows Visual Studio users CMake will automatically create all required project files: `graphsalg.sln`.
+
   For interactive prompt run the app without any arguments
 
   ```bash
