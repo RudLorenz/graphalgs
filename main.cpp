@@ -13,7 +13,6 @@ int main(int argc, char**argv)
             std::cout << "Error reading from file\n";
             return -1;
         }
-        std::cout << glp << "\n";
     }
     else // interactive input
     {
