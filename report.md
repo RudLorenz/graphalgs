@@ -16,7 +16,7 @@
 
   В качестве примера в файле `graph.in` содержится следующий граф:
 
-  ![graph.png](example_graph.png "graph.in exmaple")
+  ![graph.png](example_graph.PNG "graph.in exmaple")
 
   Граф записан в виде матрицы смежности, которая выглядит следующим образом:
 
