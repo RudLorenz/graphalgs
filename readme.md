@@ -40,6 +40,8 @@
 
   Note: the first string in `input_file` should contain the vertex count
 
+  A graph sample can be found in `sample` directory.
+
 ### Visualisation
 
   To visualise a graph write it as JSON in file `graph.json` and place it with `visual.html`.
