@@ -15,4 +15,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
 endif()
 
-add_executable(graphsalg main.cpp src/graph.h src/vertex.h)
+add_executable(graphsalg main.cpp
+        include/graph.h
+        include/vertex.h)

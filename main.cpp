@@ -1,4 +1,4 @@
-#include "src/graph.h"
+#include "include/graph.h"
 
 #include <iostream>
 
@@ -78,7 +78,7 @@ int main(int argc, char**argv)
     std::cout << "Write graph as JSON [1] or as Matrix[2] or don't[3]?\n";
 
     std::cin >> decision;
-    while(1)
+    while(true)
     {
         if (1 == decision)
         {
@@ -97,6 +97,7 @@ int main(int argc, char**argv)
                 break;
             }
         }
+
         if (3 == decision) {
             break;
         }
