@@ -26,6 +26,12 @@ public:
     int addVertex(int id, double distance);
     int addVertex(int id);
 
+    void delDirectedEdge(int id);
+    void delDirectedEdge(int id_1, int id_2);
+
+    void delEdge(int id);
+    void delEdge(int id_1, int id_2);
+
     bool traverese(int id);
 
     int getptr() const;

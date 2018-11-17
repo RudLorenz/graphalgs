@@ -52,6 +52,32 @@ int Graph::addVertex(int id)
 }
 
 
+void Graph::delDirectedEdge(int id)
+{
+    vert_.at(ptr_).erase(Vertex(id, 1));
+}
+
+
+void Graph::delDirectedEdge(int id_1, int id_2)
+{
+    vert_.at(id_1).erase(Vertex(id_2, 1));
+}
+
+
+void Graph::delEdge(int id)
+{
+    vert_.at(ptr_).erase(Vertex(id, 1));
+    vert_.at(id).erase(Vertex(ptr_, 1));
+}
+
+
+void Graph::delEdge(int id_1, int id_2)
+{
+    vert_.at(id_1).erase(Vertex(id_2, 1));
+    vert_.at(id_2).erase(Vertex(id_1, 1));
+}
+
+
 std::ostream &operator<<(std::ostream &os, const Graph &gp)
 {
     os << "ptr : " << gp.ptr_ << "\n";
@@ -62,6 +88,7 @@ std::ostream &operator<<(std::ostream &os, const Graph &gp)
 
     return os;
 }
+
 
 bool Graph::traverese(int id)
 {
