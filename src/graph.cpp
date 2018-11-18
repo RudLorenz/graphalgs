@@ -1,3 +1,6 @@
+
+#include <graph.h>
+
 #include "graph.h"
 
 
@@ -304,4 +307,56 @@ std::vector< std::vector<int> > Graph::findHamiltonCycles()
     recursiveHamiltonSearch(ptr_, visited, path, result);
 
     return result;
+}
+
+
+std::vector<int> Graph::getArticulationPoints() const
+{
+    std::vector<int> result;
+    std::vector<bool> visited(vert_.size(), false);
+    std::vector<int>  parent (vert_.size(), 0);
+    std::vector<int>  depth  (vert_.size(), 0);
+    std::vector<int>  low    (vert_.size(), 0);
+
+    recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
+
+    return result;
+}
+
+void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
+        std::vector<int>& parent, std::vector<bool>& visited,
+        std::vector<int>& depth,  std::vector<int>& low) const
+{
+    visited[vt] = true;
+    depth[vt] = current_depth;
+    low[vt] = current_depth;
+
+    int child_count = 0;
+    bool is_joint = false; // 420
+
+    for (const auto &adjacent : vert_.at(vt))
+    {
+        if (!visited[adjacent.id])
+        {
+            parent[adjacent.id] = vt;
+            recursiveGetAP(adjacent.id, current_depth+1, result, parent, visited, depth, low);
+            child_count++;
+
+            if (low[adjacent.id] >= depth[adjacent.id]) {
+                is_joint = true;
+            }
+
+            low[vt] = (low[vt] < low[adjacent.id]) ? low[vt] : low[adjacent.id];
+        }
+        else if (adjacent.id != parent[vt]) {
+            low[vt] = (low[vt] < depth[adjacent.id]) ? low[vt] : depth[adjacent.id];
+        }
+    }
+    if ((parent[vt] != 0 && is_joint) || (parent[vt] ==0 && child_count > 1)) {
+        result.emplace_back(vt);
+    }
+}
+
+size_t Graph::getSize() const {
+    return vert_.size();
 }

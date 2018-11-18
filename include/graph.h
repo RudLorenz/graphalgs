@@ -38,6 +38,8 @@ public:
 
     std::vector< std::vector<int> > findHamiltonCycles();
 
+    std::vector<int> getArticulationPoints() const;
+
     int writeasJSON(const std::string& filename) const;
     int writeasMatrix(const std::string& filename);
 
@@ -49,8 +51,12 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
 
 private:
-    void recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vector<int> &path,
-                                 std::vector<std::vector<int>> &result);
+    void recursiveHamiltonSearch(int vt, std::vector<bool>& visited, std::vector<int> &path,
+                                 std::vector<std::vector<int>>& result);
+
+    void recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
+                        std::vector<int>& parent, std::vector<bool>& visited,
+                        std::vector<int>& depth,  std::vector<int>& low) const;
 
     int id_gen_ {0};
     int ptr_ {0};
