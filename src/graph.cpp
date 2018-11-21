@@ -1,8 +1,4 @@
-
-#include <graph.h>
-
 #include "graph.h"
-
 
 
 void Graph::addDirectedEdge(int id_1, int id_2)
@@ -13,7 +9,7 @@ void Graph::addDirectedEdge(int id_1, int id_2)
 
 void Graph::addDirectedEdge(int id_1, int id_2, double distance)
 {
-    vert_[id_1].emplace(Vertex(id_2, distance));
+    vert_[id_1].emplace(id_2, distance);
 }
 
 
@@ -323,6 +319,7 @@ std::vector<int> Graph::getArticulationPoints() const
     return result;
 }
 
+
 void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
         std::vector<int>& parent, std::vector<bool>& visited,
         std::vector<int>& depth,  std::vector<int>& low) const
@@ -355,8 +352,4 @@ void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
     if ((parent[vt] != 0 && is_joint) || (parent[vt] ==0 && child_count > 1)) {
         result.emplace_back(vt);
     }
-}
-
-size_t Graph::getSize() const {
-    return vert_.size();
 }
