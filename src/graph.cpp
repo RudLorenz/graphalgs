@@ -284,8 +284,11 @@ void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vec
 std::vector< std::vector<int> > Graph::findHamiltonCycles()
 {
     std::vector< std::vector<int> > result;
-    // check if graph is connected
 
+    if (vert_.size() < 3) {
+        return result;
+    }
+    // check if graph is connected
     for (const auto &vert : vert_)
     {
         if (vert.second.empty()) {
@@ -309,12 +312,16 @@ std::vector< std::vector<int> > Graph::findHamiltonCycles()
 std::vector<int> Graph::getArticulationPoints() const
 {
     std::vector<int> result;
-    std::vector<bool> visited(vert_.size(), false);
-    std::vector<int>  parent (vert_.size(), 0);
-    std::vector<int>  depth  (vert_.size(), 0);
-    std::vector<int>  low    (vert_.size(), 0);
 
-    recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
+    if (vert_.size() > 2)
+    {
+        std::vector<bool> visited(vert_.size(), false);
+        std::vector<int> parent(vert_.size(), 0);
+        std::vector<int> depth(vert_.size(), 0);
+        std::vector<int> low(vert_.size(), 0);
+
+        recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
+    }
 
     return result;
 }
