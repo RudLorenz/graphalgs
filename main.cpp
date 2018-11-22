@@ -1,21 +1,47 @@
 #include "graph.h"
+#include "CLI11.h"
 
 #include <iostream>
 #include <limits>
 
 int main(int argc, char**argv)
 {
+    CLI::App app{"Some graph algorithms\nIf no MODE flag is supplied program expects adjacency matrix input"};
+    std::string filename = "default";
+    bool hamilton_mode    = false;
+    bool art_points_mode  = false;
+    bool interactive_mode = false;
+
+    auto file_option = app.add_option("-f, --file", filename, "Input file with adjacency matrix")
+            ->check(CLI::ExistingFile)
+            ->group("Input");
+    auto interactive_option = app.add_flag("-i, --interactive", interactive_mode, "Input graph in interactive mode")
+            ->group("Input");
+
+    app.add_flag("--hamilton", hamilton_mode, "Find and output all hamilton cycles in given graph")
+            ->ignore_case()
+            ->group("Mode");
+
+    app.add_flag("-a, --artpoints", art_points_mode, "Find and output all articulation points of given graph")
+            ->ignore_case()
+            ->group("Mode");
+
+    file_option->excludes(interactive_option);
+    interactive_option->excludes(file_option);
+
+    CLI11_PARSE(app, argc, argv);
+
     Graph glp;
 
-    if (argc == 2) // assume it's a filename
+    if (*file_option)
     {
-        if (-1 == glp.readfromMatrix(argv[1]))
-        {
-            std::cout << "Error reading from file\n";
-            return -1;
-        }
+//        if (glp.readfromMatrix(filename))
+//        {
+//            std::cout << "Can't read from file:" << filename << "\n";
+//            return -1;
+//        }
     }
-    else // interactive input
+    else if (*interactive_option)
     {
         std::cout << "Enter number of vertices:\n";
         int vert_count = 0;
@@ -58,25 +84,49 @@ int main(int argc, char**argv)
             }
         }
     }
-
-    auto result = glp.findHamiltonCycles();
-
-    if (result.empty()) {
-        std::cout << "No Hamilton cycles found\n";
-    }
     else
     {
-        for (const auto &path : result)
+        std::cout << "Non interactive matrix input\n";
+    }
+
+    if (hamilton_mode)
+    {
+        auto result = glp.findHamiltonCycles();
+
+        if (result.empty()) {
+            std::cout << "No Hamilton cycles found\n";
+        }
+        else
         {
-            for (const auto &item : path) {
-                std::cout << item << " --> ";
+            for (const auto &path : result)
+            {
+                for (const auto &item : path) {
+                    std::cout << item << " --> ";
+                }
+                std::cout << "\n";
+            }
+        }
+    }
+
+    if (art_points_mode)
+    {
+        auto ap_points = glp.getArticulationPoints();
+        if (ap_points.empty()) {
+            std::cout << "No articulation points found!\n";
+        }
+        else
+        {
+            std::cout << "Articulation points:\n";
+            for (const auto &point : ap_points) {
+                std::cout << point << " ";
             }
             std::cout << "\n";
         }
     }
 
+
     int decision = 0;
-    std::cout << "Write graph as JSON [1] or as Matrix[2] or don't[3]?\n";
+    std::cout << "Write graph as JSON [1] or as Matrix[2] or exit[3]?\n";
 
     std::cin >> decision;
     while(true)
@@ -89,9 +139,9 @@ int main(int argc, char**argv)
         if (2 == decision)
         {
             std::cout << "filename: ";
-            std::string filename;
-            std::cin >> filename;
-            if(-1 == glp.writeasMatrix(filename)) {
+            std::string output_filename;
+            std::cin >> output_filename;
+            if(!glp.writeasMatrix(output_filename)) {
                 std::cout << "cant write to file!Try different name\n";
             }
             else {
