@@ -15,8 +15,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
 endif()
 
-include_directories(include)
+add_subdirectory(include)
 
-add_executable(graphsalg main.cpp
-        include/graph.h  src/graph.cpp
-        include/vertex.h src/vertex.cpp)
+add_executable(graphsalg main.cpp)
+target_link_libraries(graphsalg graph_lib)
