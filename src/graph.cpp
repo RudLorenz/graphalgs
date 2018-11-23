@@ -250,6 +250,34 @@ int Graph::readfromMatrix(const std::string &filename)
 }
 
 
+std::vector< std::vector<int> > Graph::findHamiltonCycles()
+{
+    std::vector< std::vector<int> > result;
+
+    if (vert_.size() < 3) {
+        return result;
+    }
+    // check if graph is connected
+    for (const auto &vert : vert_)
+    {
+        if (vert.second.empty()) {
+            return result;
+        }
+    }
+
+    std::vector<int> path;
+    path.reserve(vert_.size());
+    path.emplace_back(ptr_);
+
+    std::vector<bool> visited(vert_.rbegin()->first+1, false); // ugh ugly!
+    visited[ptr_] = true;
+
+    recursiveHamiltonSearch(ptr_, visited, path, result);
+
+    return result;
+}
+
+
 void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vector<int> &path,
                                     std::vector<std::vector<int>> &result)
 {
@@ -281,44 +309,16 @@ void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vec
 }
 
 
-std::vector< std::vector<int> > Graph::findHamiltonCycles()
-{
-    std::vector< std::vector<int> > result;
-
-    if (vert_.size() < 3) {
-        return result;
-    }
-    // check if graph is connected
-    for (const auto &vert : vert_)
-    {
-        if (vert.second.empty()) {
-            return result;
-        }
-    }
-
-    std::vector<int> path;
-    path.reserve(vert_.size());
-    path.emplace_back(ptr_);
-
-    std::vector<bool> visited(vert_.size(), false);
-    visited[ptr_] = true;
-
-    recursiveHamiltonSearch(ptr_, visited, path, result);
-
-    return result;
-}
-
-
 std::vector<int> Graph::getArticulationPoints() const
 {
     std::vector<int> result;
 
     if (vert_.size() > 2)
     {
-        std::vector<bool> visited(vert_.size(), false);
-        std::vector<int> parent(vert_.size(), 0);
-        std::vector<int> depth(vert_.size(), 0);
-        std::vector<int> low(vert_.size(), 0);
+        std::vector<bool> visited(vert_.rbegin()->first+1, false);
+        std::vector<int>  parent (vert_.rbegin()->first+1, 0);
+        std::vector<int>  depth  (vert_.rbegin()->first+1, 0);
+        std::vector<int>  low    (vert_.rbegin()->first+1, 0);
 
         recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
     }

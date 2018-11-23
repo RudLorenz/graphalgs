@@ -11,6 +11,7 @@ int main(int argc, char**argv)
     bool hamilton_mode    = false;
     bool art_points_mode  = false;
     bool interactive_mode = false;
+    bool delete_mode      = false;
 
     auto file_option = app.add_option("-f, --file", filename, "Input file with adjacency matrix")
             ->check(CLI::ExistingFile)
@@ -25,6 +26,10 @@ int main(int argc, char**argv)
     app.add_flag("-a, --artpoints", art_points_mode, "Find and output all articulation points of given graph")
             ->ignore_case()
             ->group("Mode");
+
+    app.add_flag("-d, --delete", delete_mode, "Delete articualtion points if any found")
+            ->group("Mode")
+            ->needs("-a");
 
     auto file_out_flag = app.add_option("-o, --output", output_file, "Output graph in given a file")
             ->group("Output");
@@ -161,6 +166,11 @@ int main(int argc, char**argv)
                 std::cout << point << " ";
             }
             std::cout << "\n";
+        }
+
+        if (delete_mode)
+        {
+            std::cout << "delete mode\n";
         }
     }
 
