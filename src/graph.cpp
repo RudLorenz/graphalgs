@@ -232,7 +232,7 @@ int Graph::readfromMatrix(const std::string &filename)
     while (input >> tmp)
     {
         if (tmp != 0) {
-            vert_[id_gen_].insert(Vertex(counter, tmp));
+            vert_[id_gen_].emplace(counter, tmp);
         }
 
         counter++;

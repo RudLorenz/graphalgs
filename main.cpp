@@ -2,12 +2,12 @@
 #include "CLI11.h"
 
 #include <iostream>
-#include <limits>
 
 int main(int argc, char**argv)
 {
     CLI::App app{"Some graph algorithms\nIf no MODE flag is supplied program expects adjacency matrix input"};
-    std::string filename = "default";
+    std::string filename;
+    std::string output_file;
     bool hamilton_mode    = false;
     bool art_points_mode  = false;
     bool interactive_mode = false;
@@ -26,6 +26,18 @@ int main(int argc, char**argv)
             ->ignore_case()
             ->group("Mode");
 
+    auto file_out_flag = app.add_option("-o, --output", output_file, "Output graph in given a file")
+            ->group("Output");
+    auto json_out_flag = app.add_flag("-j, --json", "Output graph as a json")
+            ->group("Output")
+            ->needs(file_out_flag);
+    auto matrix_out_flag = app.add_flag("-m, --matrix", "Output graph as a matrix")
+            ->group("Output")
+            ->needs(file_out_flag);
+
+    json_out_flag->excludes(matrix_out_flag);
+    matrix_out_flag->excludes(json_out_flag);
+
     file_option->excludes(interactive_option);
     interactive_option->excludes(file_option);
 
@@ -35,11 +47,11 @@ int main(int argc, char**argv)
 
     if (*file_option)
     {
-//        if (glp.readfromMatrix(filename))
-//        {
-//            std::cout << "Can't read from file:" << filename << "\n";
-//            return -1;
-//        }
+        if (glp.readfromMatrix(filename))
+        {
+            std::cout << "Can't read from file:" << filename << "\n";
+            return -1;
+        }
     }
     else if (*interactive_option)
     {
@@ -87,6 +99,34 @@ int main(int argc, char**argv)
     else
     {
         std::cout << "Non interactive matrix input\n";
+
+        int graph_size;
+        std::cin >> graph_size;
+
+        int el_counter = graph_size*graph_size; //si senior estoy contando elementos
+        int current_row = 0;
+        int counter = 0;
+        int tmp;
+
+        for (int i = 0; i < graph_size; i++) {
+            glp.addVertex();
+        }
+
+        while(std::cin >> tmp && el_counter !=0)
+        {
+            if (tmp != 0) {
+                glp.addEdge(current_row, counter, tmp);
+            }
+            counter++;
+            el_counter--;
+
+            if (counter == graph_size)
+            {
+                counter = 0;
+                current_row++;
+            }
+        }
+
     }
 
     if (hamilton_mode)
@@ -124,40 +164,20 @@ int main(int argc, char**argv)
         }
     }
 
-
-    int decision = 0;
-    std::cout << "Write graph as JSON [1] or as Matrix[2] or exit[3]?\n";
-
-    std::cin >> decision;
-    while(true)
+    if (*json_out_flag)
     {
-        if (1 == decision)
+        if (glp.writeasJSON(output_file))
         {
-            glp.writeasJSON("graph.json");
-            break;
+            std::cout << "Error creating " << output_file << " file!\n";
+            return -1;
         }
-        if (2 == decision)
+    }
+    if (*matrix_out_flag)
+    {
+        if (glp.writeasMatrix(output_file))
         {
-            std::cout << "filename: ";
-            std::string output_filename;
-            std::cin >> output_filename;
-            if(!glp.writeasMatrix(output_filename)) {
-                std::cout << "cant write to file!Try different name\n";
-            }
-            else {
-                break;
-            }
-        }
-
-        if (3 == decision) {
-            break;
-        }
-        else
-        {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore everything until newline
-            std::cout << "Write graph as JSON [1] or as Matrix[2] or don't[3]?\n";
-            std::cin >> decision;
+            std::cout << "Error creating " << output_file << " file\n";
+            return -1;
         }
     }
 
