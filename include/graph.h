@@ -39,6 +39,7 @@ public:
     std::vector< std::vector<int> > findHamiltonCycles();
 
     std::vector<int> getArticulationPoints() const;
+    std::vector<int> getArticulationPoints(std::vector<int>& low) const;
 
     int writeasJSON(const std::string& filename) const;
     int writeasMatrix(const std::string& filename);

@@ -1,5 +1,8 @@
 #include "graph.h"
 
+#include <iostream>
+#include <graph.h>
+
 
 void Graph::addDirectedEdge(int id_1, int id_2)
 {
@@ -319,6 +322,27 @@ std::vector<int> Graph::getArticulationPoints() const
         std::vector<int>  parent (vert_.rbegin()->first+1, 0);
         std::vector<int>  depth  (vert_.rbegin()->first+1, 0);
         std::vector<int>  low    (vert_.rbegin()->first+1, 0);
+
+        recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
+    }
+
+    return result;
+}
+
+
+std::vector<int> Graph::getArticulationPoints(std::vector<int> &low) const
+{
+    std::vector<int> result;
+
+    if (vert_.size() > 2)
+    {
+        std::vector<bool> visited(vert_.rbegin()->first+1, false);
+        std::vector<int>  parent (vert_.rbegin()->first+1, 0);
+        std::vector<int>  depth  (vert_.rbegin()->first+1, 0);
+
+        // make sure that we will overwrite all low values
+        low.clear();
+        low.resize(vert_.rbegin()->first+1);
 
         recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
     }
