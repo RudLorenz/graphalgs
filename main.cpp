@@ -108,7 +108,7 @@ int main(int argc, char**argv)
         int graph_size;
         std::cin >> graph_size;
 
-        int el_counter = graph_size*graph_size; //si senior estoy contando elementos
+        int el_counter = graph_size*graph_size; // si senior estoy contando elementos
         int current_row = 0;
         int counter = 0;
         int tmp;
@@ -130,6 +130,10 @@ int main(int argc, char**argv)
                 counter = 0;
                 current_row++;
             }
+        }
+        if (el_counter != 0) {
+            std::cout << "Not enough elements!\nRequired:" << graph_size * graph_size << ". Actual: " << el_counter  << "\n";
+            return -1;
         }
 
     }
