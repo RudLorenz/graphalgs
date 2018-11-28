@@ -169,16 +169,13 @@ int Graph::writeasJSON(const std::string &filename, const std::vector<int> &grou
         return -1;
     }
 
-    int j = 0;
-
     result << "{\n";
     result << "\t\"nodes\": [\n";
     for (auto i = vert_.cbegin(); i != vert_.cend(); i++)
     {
         result << "\t\t{\"id\": " << i->first
                << ", \"txt\": \"" << i->first
-               << "\", \"group\":" << groups[j] << "},\n";
-        j++; // this is awful
+               << "\", \"group\":" << groups[i->first] << "},\n";
     }
 
     result.seekp(-2, result.cur);
