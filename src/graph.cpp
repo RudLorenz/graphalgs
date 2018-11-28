@@ -357,10 +357,9 @@ void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
 {
     visited[vt] = true;
     depth[vt] = current_depth;
-    low[vt] = current_depth;
+    low[vt]   = current_depth;
 
     int child_count = 0;
-    bool is_joint = false; // 420
 
     for (const auto &adjacent : vert_.at(vt))
     {
@@ -370,17 +369,17 @@ void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
             recursiveGetAP(adjacent.id, current_depth+1, result, parent, visited, depth, low);
             child_count++;
 
-            if (low[adjacent.id] >= depth[adjacent.id]) {
-                is_joint = true;
-            }
-
             low[vt] = (low[vt] < low[adjacent.id]) ? low[vt] : low[adjacent.id];
+
+            if (parent[vt] == 0 && child_count > 1) {
+                result.emplace_back(vt);
+            }
+            if (parent[vt] != 0 && low[adjacent.id] >= depth[vt]) {
+                result.emplace_back(vt);
+            }
         }
-        else if (adjacent.id != parent[vt]) {
+        else if(adjacent.id != parent[vt]) {
             low[vt] = (low[vt] < depth[adjacent.id]) ? low[vt] : depth[adjacent.id];
         }
-    }
-    if ((parent[vt] != 0 && is_joint) || (parent[vt] ==0 && child_count > 1)) {
-        result.emplace_back(vt);
     }
 }
