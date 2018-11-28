@@ -112,6 +112,11 @@ int Graph::getptr() const
 }
 
 
+size_t Graph::size() const {
+    return vert_.size();
+}
+
+
 int Graph::writeasJSON(const std::string &filename) const
 {
     std::ofstream result_file(filename);
@@ -126,6 +131,54 @@ int Graph::writeasJSON(const std::string &filename) const
     result << "\t\"nodes\": [\n";
     for (const auto &item : vert_) {
         result << "\t\t{\"id\": " << item.first << ", \"txt\": \"" << item.first << "\"},\n";
+    }
+
+    result.seekp(-2, result.cur);
+    result << "\n\t],\n";
+
+    result << "\t\"links\": [\n";
+
+    for (const auto &item : vert_)
+    {
+        for (const auto &set_elem : item.second)
+        {
+            result << "\t\t{\"source\": " << item.first
+                   << ", \"target\": "    << set_elem.id << ""
+                   //<< "\", \"value\": "       << set_elem.distance
+                   << "},\n";
+        }
+    }
+
+    result.seekp(-2, result.cur);
+    result << "\n\t]\n}";
+
+    result_file << result.rdbuf();
+    result_file.close();
+
+    return 0;
+}
+
+
+int Graph::writeasJSON(const std::string &filename, const std::vector<int> &groups) const
+{
+    std::ofstream result_file(filename);
+
+    std::stringstream result;
+
+    if (!result_file.is_open() && groups.size() != vert_.size()) {
+        return -1;
+    }
+
+    int j = 0;
+
+    result << "{\n";
+    result << "\t\"nodes\": [\n";
+    for (auto i = vert_.cbegin(); i != vert_.cend(); i++)
+    {
+        result << "\t\t{\"id\": " << i->first
+               << ", \"txt\": \"" << i->first
+               << "\", \"group\":" << groups[j] << "},\n";
+        j++; // this is awful
     }
 
     result.seekp(-2, result.cur);

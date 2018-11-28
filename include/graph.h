@@ -35,6 +35,7 @@ public:
     bool traverese(int id);
 
     int getptr() const;
+    size_t size() const;
 
     std::vector< std::vector<int> > findHamiltonCycles();
 
@@ -42,6 +43,7 @@ public:
     std::vector<int> getArticulationPoints(std::vector<int>& low) const;
 
     int writeasJSON(const std::string& filename) const;
+    int writeasJSON(const std::string& filename, const std::vector<int>& groups) const;
     int writeasMatrix(const std::string& filename);
 
     int readfromMatrix(const std::string& filename);

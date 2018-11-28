@@ -153,9 +153,11 @@ int main(int argc, char**argv)
         }
     }
 
+    std::vector<int> groups(glp.size(), 0);
+
     if (art_points_mode)
     {
-        auto ap_points = glp.getArticulationPoints();
+        auto ap_points = glp.getArticulationPoints(groups);
         if (ap_points.empty()) {
             std::cout << "No articulation points found!\n";
         }
@@ -176,7 +178,7 @@ int main(int argc, char**argv)
 
     if (*json_out_flag)
     {
-        if (glp.writeasJSON(output_file))
+        if (glp.writeasJSON(output_file, groups))
         {
             std::cout << "Error creating " << output_file << " file!\n";
             return -1;
