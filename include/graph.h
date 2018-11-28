@@ -32,6 +32,8 @@ public:
     void delEdge(int id);
     void delEdge(int id_1, int id_2);
 
+    void delVertex(int id);
+
     bool traverese(int id);
 
     int getptr() const;

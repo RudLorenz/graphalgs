@@ -173,6 +173,12 @@ int main(int argc, char**argv)
         if (delete_mode)
         {
             std::cout << "delete mode\n";
+            if (!ap_points.empty())
+            {
+                for (const auto &item : ap_points) {
+                    glp.delVertex(item);
+                }
+            }
         }
     }
 

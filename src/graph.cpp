@@ -80,6 +80,15 @@ void Graph::delEdge(int id_1, int id_2)
 }
 
 
+void Graph::delVertex(int id)
+{
+    vert_.erase(id);
+    for (auto &vertex : vert_) {
+        vertex.second.erase({id, 1});
+    }
+}
+
+
 std::ostream &operator<<(std::ostream &os, const Graph &gp)
 {
     os << "ptr : " << gp.ptr_ << "\n";
