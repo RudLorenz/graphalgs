@@ -1,20 +1,4 @@
-#ifndef GRAPHSALG_VERTEX_H
-#define GRAPHSALG_VERTEX_H
-
-#include <ostream>
-#include <set>
-
-struct Vertex
-{
-    Vertex(int i, double d) : id(i), distance(d) {};
-    int id;
-    double distance;
-
-    friend bool operator< (const Vertex& lhs, const Vertex& rhs);
-    friend bool operator> (const Vertex& lhs, const Vertex& rhs);
-    friend bool operator==(const Vertex& lhs, const Vertex& rhs);
-    friend bool operator!=(const Vertex& lhs, const Vertex& rhs);
-};
+#include "vertex.h"
 
 
 std::ostream& operator<<(std::ostream& os, const std::set<Vertex>& vc)
@@ -50,5 +34,3 @@ bool operator!=(const Vertex &lhs, const Vertex &rhs)
     return lhs.id != rhs.id;
 }
 
-
-#endif //GRAPHSALG_VERTEX_H

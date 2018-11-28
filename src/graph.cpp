@@ -1,55 +1,7 @@
-#ifndef GRAPHSALG_GRAPH_H
-#define GRAPHSALG_GRAPH_H
+#include "graph.h"
 
-#include "vertex.h"
-
-#include <set>
-#include <map>
-#include <vector>
-#include <ostream>
-#include <fstream>
-#include <sstream>
-
-class Graph
-{
-public:
-    Graph() = default;
-    Graph(const Graph& gp) = default;
-
-    void addDirectedEdge(int id_1, int id_2);
-    void addDirectedEdge(int id_1, int id_2, double distance);
-
-    void addEdge(int id_1, int id_2);
-    void addEdge(int id_1, int id_2, double distance);
-
-    int addVertex();
-    int addVertex(int id, double distance);
-    int addVertex(int id);
-
-    bool traverese(int id);
-
-    int getptr() const;
-
-    auto findHamiltonCycles();
-
-    int writeasJSON(const std::string& filename) const;
-    int writeasMatrix(const std::string& filename);
-
-    int readfromMatrix(const std::string& filename);
-
-    std::set<Vertex>& operator[](int id);
-    const std::set<Vertex>& operator[](int id) const;
-
-    friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
-
-private:
-    void recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vector<int> &path,
-                                 std::vector<std::vector<int>> &result);
-
-    int id_gen_ {0};
-    int ptr_ {0};
-    std::map<int, std::set<Vertex>> vert_;
-};
+#include <iostream>
+#include <graph.h>
 
 
 void Graph::addDirectedEdge(int id_1, int id_2)
@@ -60,7 +12,7 @@ void Graph::addDirectedEdge(int id_1, int id_2)
 
 void Graph::addDirectedEdge(int id_1, int id_2, double distance)
 {
-    vert_[id_1].emplace(Vertex(id_2, distance));
+    vert_[id_1].emplace(id_2, distance);
 }
 
 
@@ -102,6 +54,41 @@ int Graph::addVertex(int id)
 }
 
 
+void Graph::delDirectedEdge(int id)
+{
+    vert_.at(ptr_).erase(Vertex(id, 1));
+}
+
+
+void Graph::delDirectedEdge(int id_1, int id_2)
+{
+    vert_.at(id_1).erase(Vertex(id_2, 1));
+}
+
+
+void Graph::delEdge(int id)
+{
+    vert_.at(ptr_).erase(Vertex(id, 1));
+    vert_.at(id).erase(Vertex(ptr_, 1));
+}
+
+
+void Graph::delEdge(int id_1, int id_2)
+{
+    vert_.at(id_1).erase(Vertex(id_2, 1));
+    vert_.at(id_2).erase(Vertex(id_1, 1));
+}
+
+
+void Graph::delVertex(int id)
+{
+    vert_.erase(id);
+    for (auto &vertex : vert_) {
+        vertex.second.erase({id, 1});
+    }
+}
+
+
 std::ostream &operator<<(std::ostream &os, const Graph &gp)
 {
     os << "ptr : " << gp.ptr_ << "\n";
@@ -112,6 +99,7 @@ std::ostream &operator<<(std::ostream &os, const Graph &gp)
 
     return os;
 }
+
 
 bool Graph::traverese(int id)
 {
@@ -133,6 +121,11 @@ int Graph::getptr() const
 }
 
 
+size_t Graph::size() const {
+    return vert_.size();
+}
+
+
 int Graph::writeasJSON(const std::string &filename) const
 {
     std::ofstream result_file(filename);
@@ -147,6 +140,51 @@ int Graph::writeasJSON(const std::string &filename) const
     result << "\t\"nodes\": [\n";
     for (const auto &item : vert_) {
         result << "\t\t{\"id\": " << item.first << ", \"txt\": \"" << item.first << "\"},\n";
+    }
+
+    result.seekp(-2, result.cur);
+    result << "\n\t],\n";
+
+    result << "\t\"links\": [\n";
+
+    for (const auto &item : vert_)
+    {
+        for (const auto &set_elem : item.second)
+        {
+            result << "\t\t{\"source\": " << item.first
+                   << ", \"target\": "    << set_elem.id << ""
+                   //<< "\", \"value\": "       << set_elem.distance
+                   << "},\n";
+        }
+    }
+
+    result.seekp(-2, result.cur);
+    result << "\n\t]\n}";
+
+    result_file << result.rdbuf();
+    result_file.close();
+
+    return 0;
+}
+
+
+int Graph::writeasJSON(const std::string &filename, const std::vector<int> &groups) const
+{
+    std::ofstream result_file(filename);
+
+    std::stringstream result;
+
+    if (!result_file.is_open() && groups.size() != vert_.size()) {
+        return -1;
+    }
+
+    result << "{\n";
+    result << "\t\"nodes\": [\n";
+    for (auto i = vert_.cbegin(); i != vert_.cend(); i++)
+    {
+        result << "\t\t{\"id\": " << i->first
+               << ", \"txt\": \"" << i->first
+               << "\", \"group\":" << groups[i->first] << "},\n";
     }
 
     result.seekp(-2, result.cur);
@@ -256,7 +294,7 @@ int Graph::readfromMatrix(const std::string &filename)
     while (input >> tmp)
     {
         if (tmp != 0) {
-            vert_[id_gen_].insert(Vertex(counter, tmp));
+            vert_[id_gen_].emplace(counter, tmp);
         }
 
         counter++;
@@ -271,6 +309,34 @@ int Graph::readfromMatrix(const std::string &filename)
     input.close();
 
     return 0;
+}
+
+
+std::vector< std::vector<int> > Graph::findHamiltonCycles()
+{
+    std::vector< std::vector<int> > result;
+
+    if (vert_.size() < 3) {
+        return result;
+    }
+    // check if graph is connected
+    for (const auto &vert : vert_)
+    {
+        if (vert.second.empty()) {
+            return result;
+        }
+    }
+
+    std::vector<int> path;
+    path.reserve(vert_.size());
+    path.emplace_back(ptr_);
+
+    std::vector<bool> visited(vert_.rbegin()->first+1, false); // ugh ugly!
+    visited[ptr_] = true;
+
+    recursiveHamiltonSearch(ptr_, visited, path, result);
+
+    return result;
 }
 
 
@@ -305,29 +371,74 @@ void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vec
 }
 
 
-auto Graph::findHamiltonCycles()
+std::vector<int> Graph::getArticulationPoints() const
 {
-    std::vector<std::vector<int>> result;
-    // check if graph is connected
+    std::vector<int> result;
 
-    for (const auto &vert : vert_)
+    if (vert_.size() > 2)
     {
-        if (vert.second.empty()) {
-            return result;
-        }
+        std::vector<bool> visited(vert_.rbegin()->first+1, false);
+        std::vector<int>  parent (vert_.rbegin()->first+1, 0);
+        std::vector<int>  depth  (vert_.rbegin()->first+1, 0);
+        std::vector<int>  low    (vert_.rbegin()->first+1, 0);
+
+        recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
     }
-
-    std::vector<int> path;
-    path.reserve(vert_.size());
-    path.emplace_back(ptr_);
-
-    std::vector<bool> visited(vert_.size(), false);
-    visited[ptr_] = true;
-
-    recursiveHamiltonSearch(ptr_, visited, path, result);
 
     return result;
 }
 
 
-#endif //GRAPHSALG_GRAPH_H
+std::vector<int> Graph::getArticulationPoints(std::vector<int> &low) const
+{
+    std::vector<int> result;
+
+    if (vert_.size() > 2)
+    {
+        std::vector<bool> visited(vert_.rbegin()->first+1, false);
+        std::vector<int>  parent (vert_.rbegin()->first+1, 0);
+        std::vector<int>  depth  (vert_.rbegin()->first+1, 0);
+
+        // make sure that we will overwrite all low values
+        low.clear();
+        low.resize(vert_.rbegin()->first+1);
+
+        recursiveGetAP(ptr_, 0, result, parent, visited, depth, low);
+    }
+
+    return result;
+}
+
+
+void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
+        std::vector<int>& parent, std::vector<bool>& visited,
+        std::vector<int>& depth,  std::vector<int>& low) const
+{
+    visited[vt] = true;
+    depth[vt] = current_depth;
+    low[vt]   = current_depth;
+
+    int child_count = 0;
+
+    for (const auto &adjacent : vert_.at(vt))
+    {
+        if (!visited[adjacent.id])
+        {
+            parent[adjacent.id] = vt;
+            recursiveGetAP(adjacent.id, current_depth+1, result, parent, visited, depth, low);
+            child_count++;
+
+            low[vt] = (low[vt] < low[adjacent.id]) ? low[vt] : low[adjacent.id];
+
+            if (parent[vt] == 0 && child_count > 1) {
+                result.emplace_back(vt);
+            }
+            if (parent[vt] != 0 && low[adjacent.id] >= depth[vt]) {
+                result.emplace_back(vt);
+            }
+        }
+        else if(adjacent.id != parent[vt]) {
+            low[vt] = (low[vt] < depth[adjacent.id]) ? low[vt] : depth[adjacent.id];
+        }
+    }
+}
