@@ -396,7 +396,7 @@ std::vector<int> Graph::getArticulationPoints(std::vector<int> &low) const
     if (vert_.size() > 2)
     {
         std::vector<bool> visited(vert_.rbegin()->first+1, false);
-        std::vector<int>  parent (vert_.rbegin()->first+1, 0);
+        std::vector<int>  parent (vert_.rbegin()->first+1, -1);
         std::vector<int>  depth  (vert_.rbegin()->first+1, 0);
 
         // make sure that we will overwrite all low values
@@ -430,10 +430,10 @@ void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
 
             low[vt] = (low[vt] < low[adjacent.id]) ? low[vt] : low[adjacent.id];
 
-            if (parent[vt] == 0 && child_count > 1) {
+            if (parent[vt] == -1 && child_count > 1) {
                 result.emplace_back(vt);
             }
-            if (parent[vt] != 0 && low[adjacent.id] >= depth[vt]) {
+            if (parent[vt] != -1 && low[adjacent.id] >= depth[vt]) {
                 result.emplace_back(vt);
             }
         }
