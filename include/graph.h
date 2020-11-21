@@ -39,14 +39,14 @@ public:
     int getptr() const;
     size_t size() const;
 
-    std::vector< std::vector<int> > findHamiltonCycles();
+    std::vector< std::vector<int> > findHamiltonCycles() const;
 
     std::vector<int> getArticulationPoints() const;
     std::vector<int> getArticulationPoints(std::vector<int>& low) const;
 
     int writeasJSON(const std::string& filename) const;
     int writeasJSON(const std::string& filename, const std::vector<int>& groups) const;
-    int writeasMatrix(const std::string& filename);
+    int writeasMatrix(const std::string& filename) const;
 
     int readfromMatrix(const std::string& filename);
 
@@ -56,15 +56,23 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Graph& gp);
 
 private:
-    void recursiveHamiltonSearch(int vt, std::vector<bool>& visited, std::vector<int> &path,
-                                 std::vector<std::vector<int>>& result);
+    void recursiveHamiltonSearch(
+        int vt,
+        std::vector<bool>& visited,
+        std::vector<int> &path,
+        std::vector<std::vector<int>>& result) const;
 
-    void recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
-                        std::vector<int>& parent, std::vector<bool>& visited,
-                        std::vector<int>& depth,  std::vector<int>& low) const;
+    void recursiveGetAP(
+        int vt,
+        int current_depth,
+        std::vector<int>& result,
+        std::vector<int>& parent,
+        std::vector<bool>& visited,
+        std::vector<int>& depth,
+        std::vector<int>& low) const;
 
-    int id_gen_ {0};
-    int ptr_ {0};
+    int id_gen_;
+    int ptr_;
     std::map<int, std::set<Vertex>> vert_;
 };
 

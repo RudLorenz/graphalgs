@@ -213,7 +213,7 @@ int Graph::writeasJSON(const std::string &filename, const std::vector<int> &grou
 }
 
 
-int Graph::writeasMatrix(const std::string &filename)
+int Graph::writeasMatrix(const std::string &filename) const
 {
     std::ofstream result_file(filename);
 
@@ -290,7 +290,6 @@ int Graph::readfromMatrix(const std::string &filename)
     id_gen_ = 0;   // Should I just append the graph content?
     double tmp = 0;
 
-
     while (input >> tmp)
     {
         if (tmp != 0) {
@@ -312,7 +311,7 @@ int Graph::readfromMatrix(const std::string &filename)
 }
 
 
-std::vector< std::vector<int> > Graph::findHamiltonCycles()
+std::vector< std::vector<int> > Graph::findHamiltonCycles() const
 {
     std::vector< std::vector<int> > result;
 
@@ -340,15 +339,18 @@ std::vector< std::vector<int> > Graph::findHamiltonCycles()
 }
 
 
-void Graph::recursiveHamiltonSearch(int vt, std::vector<bool> &visited, std::vector<int> &path,
-                                    std::vector<std::vector<int>> &result)
+void Graph::recursiveHamiltonSearch(
+    int vt,
+    std::vector<bool> &visited,
+    std::vector<int> &path,
+    std::vector<std::vector<int>> &result) const
 {
-    if(vert_.size() == path.size())
+    if (vert_.size() == path.size())
     {
-        bool last_connected_to_first =
-                (vert_.at( path.back() ).find( Vertex(path.front(), 1) ) != vert_.at( path.back() ).end());
+        bool last_connected_to_first = (vert_.at( path.back() )
+            .find( Vertex(path.front(), 1) ) != vert_.at( path.back() ).end());
 
-        if(last_connected_to_first) {
+        if (last_connected_to_first) {
             result.emplace_back(path);
         }
         return;
@@ -437,7 +439,7 @@ void Graph::recursiveGetAP(int vt, int current_depth, std::vector<int>& result,
                 result.emplace_back(vt);
             }
         }
-        else if(adjacent.id != parent[vt]) {
+        else if (adjacent.id != parent[vt]) {
             low[vt] = (low[vt] < depth[adjacent.id]) ? low[vt] : depth[adjacent.id];
         }
     }
